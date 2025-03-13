@@ -16,22 +16,25 @@ public class DetectFront : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == gameObject.layer)
+        if (collision.transform.CompareTag("Hero"))
         {
-            
-            //Debug.Log("충돌!!!!!!!!!!!!!!!!");
+            if (Mathf.Abs(m_Rigid.velocity.y) < 0.1f)
+            {
+                Debug.LogWarning("끼임" + m_Monster.gameObject.name);
+                m_Rigid.velocity = Vector2.down * 5;
+            }
+        }
+    }
 
-            //m_Monster.StateMachine.ChangeState(StateType.Jump);
-            //m_Rigid.velocity = Vector2.zero;
-
-            //Vector2 direction = new Vector2(-1f, 1.5f);
-            //m_Rigid.AddForce(direction * 3f, ForceMode2D.Impulse);
-
-            //m_Monster.CanMove = true;
-
-            // 덜커덩하지만 원하는 곳에 착지함
-            //m_Rigid.AddForce(Vector2.up * 1.5f, ForceMode2D.Impulse);
-            //transform.parent.DOJump(m_Rigid.position + new Vector2(-0.5f, 0), 1f, 1, 0.2f, false);
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Hero"))
+        {
+            if (Mathf.Abs(m_Rigid.velocity.y) < 0.1f)
+            {
+                Debug.LogWarning("끼임" + m_Monster.gameObject.name);
+                m_Rigid.velocity = Vector2.down * 5;
+            }
         }
     }
 }

@@ -8,7 +8,6 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class StateJump : StateBase
 {
-    // 3
     private float m_JumpForce = 3.8f;
     private Vector2 m_Direction;
 
@@ -16,7 +15,7 @@ public class StateJump : StateBase
     {
     }
 
-    public override bool CanExecute => machine.CurrentType == StateType.Move || machine.CurrentType == StateType.None;
+    public override bool CanExecute => true;
 
     public override void OnEnterState()
     {
@@ -27,7 +26,6 @@ public class StateJump : StateBase
         m_Direction = new Vector2(0, collider.bounds.size.y + 0.1f);
         rigid.AddForce(Vector2.up * m_JumpForce, ForceMode2D.Impulse);
 
-        Debug.Log(machine.CurrentType);
         Debug.Log($"jump {monster.name}");
 
     }
@@ -38,7 +36,7 @@ public class StateJump : StateBase
         
         if (monster.IsGrounded)
         {
-            Debug.Log($"땅에 있음 {monster.name}");
+            //Debug.Log($"땅에 있음 {monster.name}");
             machine.ChangeState(StateType.None);
 
             return;

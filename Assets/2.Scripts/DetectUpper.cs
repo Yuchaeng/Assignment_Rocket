@@ -17,10 +17,8 @@ public class DetectUpper : MonoBehaviour
     {
         if (collision.gameObject.layer == gameObject.layer)
         {
-            //m_Monster.m_CanMove = false;
-            //m_Rigid.velocity = new Vector2(2f, 0);
             m_Monster.StateMachine.ChangeState(StateType.MoveBackward);
-            Debug.Log("위!!!!!!!!!!!!!!!!");
+            Debug.Log("뒤 enter");
         }
     }
 
@@ -38,10 +36,14 @@ public class DetectUpper : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        Debug.Log("끝");
-        //m_Monster.m_CanMove = true;
-        //m_Monster.StateMachine.ChangeState(StateType.None);
-
+        if (collision.gameObject.layer == gameObject.layer)
+        {
+            Debug.Log("upper end");
+            if (m_Monster.IsMovingBackward)
+            {
+                //m_Monster.StateMachine.ChangeState(StateType.None);
+            }
+        }
     }
 
 }

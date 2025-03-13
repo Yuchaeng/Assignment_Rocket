@@ -17,19 +17,12 @@ public class StateMoveBackward : StateBase
 
     public override void OnEnterState()
     {
-        Debug.Log("back enter");
         m_Target = rigid.position + Vector2.right * 1.8f;
 
         monster.CanMove = false;
         monster.IsMovingBackward = true;
-        //monster.StartCoroutine(MoveBack());
     }
 
-    private IEnumerator MoveBack()
-    {
-        rigid.position += Vector2.right;
-        yield return new WaitForSeconds(1f);
-    }
 
     public override void OnUpdateState()
     {
@@ -38,8 +31,9 @@ public class StateMoveBackward : StateBase
 
         if (m_Current < m_Duration)
         {
+            rigid.position = Vector2.Lerp(rigid.position, rigid.position + Vector2.right * 4.5f, m_Current / m_Duration * Time.deltaTime);
+
             //rigid.position = Vector2.MoveTowards(rigid.position, rigid.position + Vector2.right, 10f * Time.deltaTime);
-            rigid.position = Vector2.Lerp(rigid.position, rigid.position + Vector2.right * 4f, m_Current/m_Duration * Time.deltaTime);
             m_Current += Time.deltaTime;
         }
         else
@@ -55,7 +49,6 @@ public class StateMoveBackward : StateBase
 
     public override void OnExitState()
     {
-        Debug.Log("back exit");
         m_Current = 0;
         monster.CanMove = true;
         monster.IsMovingBackward= false;
