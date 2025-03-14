@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum StateType
 {
-    None,
-    Move,
+    Default,
     Jump,
     MoveBackward,
     Attack,
@@ -21,6 +15,7 @@ public abstract class StateBase
     protected Monster monster;
     protected Rigidbody2D rigid;
     protected Collider2D collider;
+    protected Animator animator;
     protected StateMachine machine;
 
     public StateBase(Monster monster)
@@ -28,11 +23,12 @@ public abstract class StateBase
         this.monster = monster;
         rigid = monster.GetComponent<Rigidbody2D>();
         collider = monster.GetComponent<CapsuleCollider2D>();
+        animator = monster.GetComponent<Animator>();
         machine = monster.StateMachine;
     }
 
     public abstract bool CanExecute { get; }
-    public abstract void OnEnterState();
+    public abstract void OnEnterState(object obj = null);
     public abstract void OnUpdateState();
     public abstract void OnExitState();
 }

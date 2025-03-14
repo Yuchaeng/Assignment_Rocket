@@ -1,13 +1,7 @@
-﻿
-
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 public class StateMachine
 {
-    // 상태 돌릴 머신
-    // Statebase - 각 상태가 상속?
-    // 상태별 행동 작성할 함수, 상태 변화, update에서 돌리기, 몬스터 갖다 쓰기, 서로 이어주기
     public StateType CurrentType;
     public StateBase CurrentState;
     public Dictionary<StateType, StateBase> States;
@@ -16,6 +10,11 @@ public class StateMachine
     {
     }
 
+    /// <summary>
+    /// 상태를 정의하고 초기화합니다.
+    /// </summary>
+    /// <param name="states">가질 상태들 넣은 딕셔너리</param>
+    /// <param name="initType">초기 상태</param>
     public void Init(Dictionary<StateType, StateBase> states, StateType initType)
     {
         States = states;
@@ -24,11 +23,10 @@ public class StateMachine
         CurrentState?.OnEnterState();
     }
 
-    public bool ChangeState(StateType newType)
+    public bool ChangeState(StateType newType, object obj = null)
     {
-        if (CurrentType == newType && CurrentType != StateType.Hurt)
+        if (CurrentType == newType)
         {
-            Debug.Log($"같은 상태 {CurrentType}, {newType}");
             return false;
         }
 
@@ -40,7 +38,7 @@ public class StateMachine
         CurrentState?.OnExitState();
         CurrentType = newType;
         CurrentState = States[newType];
-        CurrentState.OnEnterState();
+        CurrentState.OnEnterState(obj);
         return true;
     }
 

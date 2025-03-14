@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StateAttack : StateBase
 {
-    private float cur = 0;
-    private float dur = 0.5f;
+    private float m_DamageToHero = 3f;
+    private RaycastHit2D m_Hit;
 
     public StateAttack(Monster monster) : base(monster)
     {
@@ -17,30 +11,28 @@ public class StateAttack : StateBase
 
     public override bool CanExecute => true;
 
-    public override void OnEnterState()
+    public override void OnEnterState(object obj = null)
     {
         monster.CanMove = true;
-        Debug.Log("Attack!!!!!!!");
-        // 애니메이션 바꾸기
 
+        m_Hit = (RaycastHit2D)obj;
+        if (m_Hit.transform.TryGetComponent(out CharacterBase box))
+        {
+            box.OnDamaged(m_DamageToHero);
+        }
+
+        animator.SetTrigger("IsAttack");
+        
     }
     public override void OnUpdateState()
     {
-       // after animation ended, 상태 변화
-       if (cur >= dur)
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.8f)
         {
-            
-            machine.ChangeState(StateType.None);
-        }
-        else
-        {
-            cur += Time.deltaTime;
+            machine.ChangeState(StateType.Default);
         }
     }
 
     public override void OnExitState()
     {
     }
-
-
 }

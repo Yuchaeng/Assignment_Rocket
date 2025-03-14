@@ -1,13 +1,13 @@
 ﻿
-public class StateNone : StateBase
+public class StateDefault : StateBase
 {
-    public StateNone(Monster monster) : base(monster)
+    public StateDefault(Monster monster) : base(monster)
     {
     }
 
     public override bool CanExecute => machine.CurrentType != StateType.Die;
 
-    public override void OnEnterState()
+    public override void OnEnterState(object obj = null)
     {
     }
     public override void OnUpdateState()
