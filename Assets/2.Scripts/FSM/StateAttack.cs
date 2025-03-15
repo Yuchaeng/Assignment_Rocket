@@ -13,7 +13,7 @@ public class StateAttack : StateBase
 
     public override void OnEnterState(object obj = null)
     {
-        monster.CanMove = true;
+        monster.CanMove = false;
 
         m_Hit = (RaycastHit2D)obj;
         if (m_Hit.transform.TryGetComponent(out CharacterBase box))
@@ -34,5 +34,6 @@ public class StateAttack : StateBase
 
     public override void OnExitState()
     {
+        monster.SetAttackCoolTime();
     }
 }

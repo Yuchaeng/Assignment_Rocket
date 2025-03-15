@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 
@@ -17,9 +18,11 @@ public class Monster : CharacterBase
     public bool IsGrounded { get; private set; } = true;
     public bool IsMovingBackward { get; set; } = false;
     public bool CanAttack { get; private set; } = true;
+    public bool CanJump { get; private set; } = true;
 
     private float m_AttackSpeed = 1f;
     private WaitForSeconds m_WaitforAttack;
+    private WaitForSeconds m_WaitforJump;
 
     [HideInInspector] public StateMachine StateMachine;
     private MonsterHpBar m_HpBar;
@@ -35,6 +38,7 @@ public class Monster : CharacterBase
         m_MyLayer = 1 << gameObject.layer;
         m_HeroLayer = 1 << LayerMask.NameToLayer("Hero");
         m_WaitforAttack = new WaitForSeconds(1 / m_AttackSpeed);
+        m_WaitforJump = new WaitForSeconds(2f);
 
         InitStateMachine();
     }
@@ -57,15 +61,26 @@ public class Monster : CharacterBase
         }
 
         // 뒤로 가는 중에는 점프하지 않음
-        if (!IsMovingBackward)
+        if (!IsMovingBackward && CanJump)
         {
             TryJump();
         }
 
-        if (IsJumping)
+        if (IsMovingBackward)
         {
-            IsGrounded = CheckGround();
+            Vector3 start = transform.position + new Vector3(0.2f, 0.5f);
+            RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position + new Vector3(0.2f, 0.5f), start + Vector3.right * 1.5f, m_MyLayer);
+            //RaycastHit2D hitBack = Physics2D.Raycast(m_Rigid.position + new Vector2(0.2f, 0.5f), Vector2.right, 0.1f, m_MyLayer);
+            foreach (var hit in hits)
+            {
+                hit.transform.position += Vector3.right * 0.05f;
+            }
+            //if (hitBack)
+            //{
+            //    hitBack.transform.position += Vector3.right * 0.08f;
+            //}
         }
+
     }
 
     private void InitStateMachine()
@@ -94,8 +109,8 @@ public class Monster : CharacterBase
 
     public void SetHpBar(GameObject hpBar)
     {
-        MaxHp = 30;
-        CurrentHp = 30;
+        MaxHp = 20;
+        CurrentHp = 20;
 
         m_HpBar = hpBar.GetComponent<MonsterHpBar>();
         m_HpBar.GetSliderComp();
@@ -105,12 +120,26 @@ public class Monster : CharacterBase
     private void TryJump()
     {
         // 앞의 몬스터 감지하면 점프
-        RaycastHit2D hitFront = Physics2D.Raycast(m_Rigid.position + new Vector2(-0.7f, 0.3f), Vector2.left, 0.2f, m_MyLayer);
+        RaycastHit2D hitFront = Physics2D.Raycast(m_Rigid.position + new Vector2(-0.7f, 0.3f), Vector2.left, 0.1f, m_MyLayer);
 
         if (hitFront)
         {
             StateMachine.ChangeState(StateType.Jump);
+            CanJump = false;
+            //StartCoroutine(WaitJumpCoolTime());
         }
+    }
+
+    public void SetJumpCoolTime()
+    {
+        StartCoroutine(WaitJumpCoolTime());
+        CanMove = true;
+    }
+
+    private IEnumerator WaitJumpCoolTime()
+    {
+        yield return m_WaitforJump;
+        CanJump = true;
     }
 
     private bool CheckGround()
@@ -129,8 +158,13 @@ public class Monster : CharacterBase
         {
             CanAttack = false;
             StateMachine.ChangeState(StateType.Attack, hitAttack);
-            StartCoroutine(WaitAttackCoolTime());
+            //StartCoroutine(WaitAttackCoolTime());
         }
+    }
+
+    public void SetAttackCoolTime()
+    {
+        StartCoroutine(WaitAttackCoolTime());
     }
 
     private IEnumerator WaitAttackCoolTime()
@@ -189,6 +223,7 @@ public class Monster : CharacterBase
         IsGrounded = true;
         IsMovingBackward = false;
         CanAttack = true;
+        CanJump = true;
         m_IsFirstDamage = true;
 
         StateMachine.CurrentType = StateType.Default;
@@ -200,11 +235,15 @@ public class Monster : CharacterBase
     {
         Gizmos.color = Color.blue;
         Vector2 lineOrigin = (Vector2)transform.position + new Vector2(-0.7f, 0.3f);
-        Gizmos.DrawLine(lineOrigin, lineOrigin + Vector2.left * 0.2f);
+        Gizmos.DrawLine(lineOrigin, lineOrigin + Vector2.left * 0.1f);
 
         Gizmos.color = Color.white;
         Vector2 hitLine = (Vector2)transform.position + new Vector2(-0.5f, 0.7f);
         Gizmos.DrawLine(hitLine, hitLine + Vector2.left * 0.3f);
+
+        Gizmos.color = Color.magenta;
+        Vector2 back = (Vector2)transform.position + new Vector2(0.2f, 0.5f);
+        Gizmos.DrawLine(back, back + Vector2.right * 1.5f);
     }
 #endif
 }

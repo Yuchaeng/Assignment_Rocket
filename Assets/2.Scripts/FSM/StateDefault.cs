@@ -9,6 +9,7 @@ public class StateDefault : StateBase
 
     public override void OnEnterState(object obj = null)
     {
+        monster.CanMove = true;
     }
     public override void OnUpdateState()
     {
