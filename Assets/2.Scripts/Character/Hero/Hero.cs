@@ -15,7 +15,7 @@ public class Hero : MonoBehaviour
     private int m_MonsterLayer3;
 
     private GameObject m_Target;
-    private float m_AttackSpeed = 2;
+    private float m_AttackSpeed = 3;
     private WaitForSeconds m_WaitForAttack;
     private float m_DamageToMonster = 5f;
 

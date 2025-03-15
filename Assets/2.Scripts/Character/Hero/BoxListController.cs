@@ -44,7 +44,7 @@ public class BoxListController : MonoBehaviour
         m_BoxList[removeIdx].OnDeadEvent -= MoveDown;
         for (int i = 0; i < m_BoxList.Count; i++)
         {
-            if (m_BoxList[i] != null)
+            if (m_BoxList[i] != null && i > removeIdx)
             {
                 m_BoxList[i].transform.position -= m_MoveDownPos;
             }

@@ -1,14 +1,10 @@
-﻿
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StateMoveBackward : StateBase
 {
     private float m_Duration = 0.3f;
     private float m_Current = 0;
-    private float m_MoveDistance = 3f;
+    private float m_MoveDistance = 2.8f;
 
     public StateMoveBackward(Monster monster) : base(monster)
     {

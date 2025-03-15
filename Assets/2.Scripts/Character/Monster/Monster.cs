@@ -15,7 +15,6 @@ public class Monster : CharacterBase
     /* 상태 확인 bool 프로퍼티들 */
     public bool CanMove { get; set; } = true;
     public bool IsJumping { get; set; } = false;
-    public bool IsGrounded { get; private set; } = true;
     public bool IsMovingBackward { get; set; } = false;
     public bool CanAttack { get; private set; } = true;
     public bool CanJump { get; private set; } = true;
@@ -65,22 +64,6 @@ public class Monster : CharacterBase
         {
             TryJump();
         }
-
-        if (IsMovingBackward)
-        {
-            Vector3 start = transform.position + new Vector3(0.2f, 0.5f);
-            RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position + new Vector3(0.2f, 0.5f), start + Vector3.right * 1.5f, m_MyLayer);
-            //RaycastHit2D hitBack = Physics2D.Raycast(m_Rigid.position + new Vector2(0.2f, 0.5f), Vector2.right, 0.1f, m_MyLayer);
-            foreach (var hit in hits)
-            {
-                hit.transform.position += Vector3.right * 0.05f;
-            }
-            //if (hitBack)
-            //{
-            //    hitBack.transform.position += Vector3.right * 0.08f;
-            //}
-        }
-
     }
 
     private void InitStateMachine()
@@ -109,8 +92,8 @@ public class Monster : CharacterBase
 
     public void SetHpBar(GameObject hpBar)
     {
-        MaxHp = 20;
-        CurrentHp = 20;
+        MaxHp = 15;
+        CurrentHp = 15;
 
         m_HpBar = hpBar.GetComponent<MonsterHpBar>();
         m_HpBar.GetSliderComp();
@@ -126,28 +109,18 @@ public class Monster : CharacterBase
         {
             StateMachine.ChangeState(StateType.Jump);
             CanJump = false;
-            //StartCoroutine(WaitJumpCoolTime());
         }
     }
 
     public void SetJumpCoolTime()
     {
         StartCoroutine(WaitJumpCoolTime());
-        CanMove = true;
     }
 
     private IEnumerator WaitJumpCoolTime()
     {
         yield return m_WaitforJump;
         CanJump = true;
-    }
-
-    private bool CheckGround()
-    {
-        RaycastHit2D hitBottom = Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
-        Debug.DrawRay(transform.position, Vector2.down * 0.1f, Color.magenta);
-
-        return hitBottom;
     }
 
     private void TryAttack()
@@ -158,7 +131,6 @@ public class Monster : CharacterBase
         {
             CanAttack = false;
             StateMachine.ChangeState(StateType.Attack, hitAttack);
-            //StartCoroutine(WaitAttackCoolTime());
         }
     }
 
@@ -220,7 +192,6 @@ public class Monster : CharacterBase
     {
         CanMove = true;
         IsJumping = false;
-        IsGrounded = true;
         IsMovingBackward = false;
         CanAttack = true;
         CanJump = true;
@@ -240,10 +211,6 @@ public class Monster : CharacterBase
         Gizmos.color = Color.white;
         Vector2 hitLine = (Vector2)transform.position + new Vector2(-0.5f, 0.7f);
         Gizmos.DrawLine(hitLine, hitLine + Vector2.left * 0.3f);
-
-        Gizmos.color = Color.magenta;
-        Vector2 back = (Vector2)transform.position + new Vector2(0.2f, 0.5f);
-        Gizmos.DrawLine(back, back + Vector2.right * 1.5f);
     }
 #endif
 }
